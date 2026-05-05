@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Class of Finally — 2026</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ============ BASE ============ */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --black: #080706;
+        --black2: #0e0c0a;
+        --black3: #141210;
+        --gold: #c9a84c;
+        --gold-light: #e8c97a;
+        --gold-dim: rgba(201, 168, 76, 0.25);
+        --gold-dimmer: rgba(201, 168, 76, 0.08);
+        --white: #f2ead8;
+        --white-dim: rgba(242, 234, 216, 0.5);
+        --white-dimmer: rgba(242, 234, 216, 0.2);
+        --red: #c0392b;
+        --serif: "Cormorant Garamond", Georgia, serif;
+        --display: "Bebas Neue", sans-serif;
+        --mono: "Space Mono", monospace;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--black);
+        color: var(--white);
+        font-family: var(--serif);
+        overflow-x: hidden;
+      }
+
+      /* Grain overlay */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: -50%;
+        width: 200%;
+        height: 200%;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+        opacity: 0.035;
+        pointer-events: none;
+        z-index: 900;
+        animation: grainShift 0.5s steps(2) infinite;
+      }
+      @keyframes grainShift {
+        0% {
+          transform: translate(0, 0);
+        }
+        25% {
+          transform: translate(-2%, -1%);
+        }
+        50% {
+          transform: translate(1%, 2%);
+        }
+        75% {
+          transform: translate(-1%, 1%);
+        }
+        100% {
+          transform: translate(2%, -2%);
+        }
+      }
+
+      /* ============ CINEMATIC OPENING ============ */
+      #opening {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        background: radial-gradient(
+            ellipse at 50% 30%,
+            rgba(201, 168, 76, 0.18),
+            transparent 45%
+          ),
+          var(--black);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: opacity 1s ease, visibility 1s ease;
+      }
+
+      #opening.opened {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .curtain {
+        position: absolute;
+        top: 0;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.35),
+            transparent,
+            rgba(0, 0, 0, 0.45)
+          ),
+          repeating-linear-gradient(
+            90deg,
+            #160b08 0 34px,
+            #2a100b 35px 58px,
+            #100705 59px 86px
+          );
+        box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.7);
+        transition: transform 1.7s cubic-bezier(0.76, 0, 0.24, 1);
+      }
+
+      .curtain.left {
+        left: 0;
+        border-right: 1px solid rgba(201, 168, 76, 0.25);
+      }
+      .curtain.right {
+        right: 0;
+        border-left: 1px solid rgba(201, 168, 76, 0.25);
+      }
+
+      #opening.opening .curtain.left {
+        transform: translateX(-102%);
+      }
+      #opening.opening .curtain.right {
+        transform: translateX(102%);
+      }
+
+      .opening-content {
+        position: relative;
+        z-index: 3;
+        text-align: center;
+        padding: 32px;
+        max-width: 560px;
+      }
+
+      .opening-kicker {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 5px;
+        color: var(--gold);
+        text-transform: uppercase;
+        opacity: 0.7;
+        margin-bottom: 24px;
+      }
+
+      .opening-title {
+        font-family: var(--display);
+        font-size: clamp(54px, 15vw, 118px);
+        letter-spacing: 8px;
+        line-height: 0.9;
+        color: var(--white);
+        text-shadow: 0 0 70px rgba(201, 168, 76, 0.22);
+        margin-bottom: 18px;
+      }
+
+      .opening-sub {
+        font-style: italic;
+        font-size: clamp(14px, 3vw, 18px);
+        color: var(--white-dim);
+        line-height: 1.7;
+        margin-bottom: 34px;
+      }
+
+      .enter-btn {
+        background: transparent;
+        color: var(--gold-light);
+        border: 1px solid var(--gold-dim);
+        padding: 16px 28px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.25s, color 0.25s, border-color 0.25s,
+          transform 0.2s;
+      }
+
+      .enter-btn:hover {
+        background: var(--gold);
+        color: var(--black);
+        border-color: var(--gold);
+        transform: translateY(-2px);
+      }
+
+      .spark {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--gold-light);
+        border-radius: 50%;
+        opacity: 0;
+        box-shadow: 0 0 18px var(--gold-light);
+        animation: sparkPop 2.8s ease-in-out infinite;
+      }
+
+      .spark.s1 {
+        top: 22%;
+        left: 22%;
+        animation-delay: 0.1s;
+      }
+      .spark.s2 {
+        top: 18%;
+        right: 26%;
+        animation-delay: 0.5s;
+      }
+      .spark.s3 {
+        top: 40%;
+        left: 14%;
+        animation-delay: 0.9s;
+      }
+      .spark.s4 {
+        top: 58%;
+        right: 18%;
+        animation-delay: 1.3s;
+      }
+      .spark.s5 {
+        bottom: 24%;
+        left: 34%;
+        animation-delay: 1.7s;
+      }
+      .spark.s6 {
+        bottom: 20%;
+        right: 36%;
+        animation-delay: 2.1s;
+      }
+
+      @keyframes sparkPop {
+        0%,
+        100% {
+          transform: scale(0.2);
+          opacity: 0;
+        }
+        40% {
+          transform: scale(1.6);
+          opacity: 0.9;
+        }
+        70% {
+          transform: scale(0.8);
+          opacity: 0.25;
+        }
+      }
+
+      body.opening-lock {
+        overflow: hidden;
+      }
+
+      /* ============ MUSIC PLAYER ============ */
+      #music-player {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(8, 7, 6, 0.85);
+        border: 1px solid var(--gold-dim);
+        padding: 12px 18px;
+        backdrop-filter: blur(12px);
+        cursor: pointer;
+        transition: border-color 0.3s;
+      }
+      #music-player:hover {
+        border-color: var(--gold);
+      }
+
+      .music-icon {
+        font-size: 18px;
+        line-height: 1;
+      }
+      .music-text-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .music-title {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: var(--gold);
+        text-transform: uppercase;
+      }
+      .music-status {
+        font-family: var(--mono);
+        font-size: 8px;
+        color: var(--white-dim);
+        letter-spacing: 1px;
+      }
+      .music-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 14px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .music-bars.active {
+        opacity: 1;
+      }
+      .bar-line {
+        width: 3px;
+        background: var(--gold);
+        border-radius: 1px;
+        animation: barDance var(--spd) ease-in-out infinite alternate;
+      }
+      @keyframes barDance {
+        from {
+          height: 3px;
+        }
+        to {
+          height: 14px;
+        }
+      }
+
+      /* ============ SCROLL REVEAL ============ */
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 1s ease, transform 1s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .rd1 {
+        transition-delay: 0.1s;
+      }
+      .rd2 {
+        transition-delay: 0.25s;
+      }
+      .rd3 {
+        transition-delay: 0.4s;
+      }
+      .rd4 {
+        transition-delay: 0.55s;
+      }
+      .rd5 {
+        transition-delay: 0.7s;
+      }
+
+      /* ============ SHARED ============ */
+      section {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 100px 28px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .chapter-tag {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 5px;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 32px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        opacity: 0.7;
+      }
+      .chapter-tag::before,
+      .chapter-tag::after {
+        content: "";
+        width: 40px;
+        height: 1px;
+        background: var(--gold-dim);
+      }
+
+      .gold-rule {
+        width: 60px;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--gold),
+          transparent
+        );
+        margin: 28px auto;
+      }
+
+      .section-rule {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--gold-dim),
+          transparent
+        );
+      }
+
+      /* ============ HERO ============ */
+      #hero {
+        background: radial-gradient(
+            ellipse at 50% 0%,
+            #1a1208 0%,
+            transparent 60%
+          ),
+          var(--black);
+        text-align: center;
+        min-height: 100vh;
+        gap: 0;
+      }
+
+      .hero-eyebrow {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 6px;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 24px;
+        opacity: 0.6;
+      }
+
+      .hero-main {
+        font-family: var(--display);
+        font-size: clamp(72px, 18vw, 160px);
+        letter-spacing: 8px;
+        line-height: 0.9;
+        color: var(--white);
+        text-shadow: 0 0 80px rgba(201, 168, 76, 0.15),
+          0 2px 0 rgba(0, 0, 0, 0.8);
+        margin-bottom: 4px;
+        position: relative;
+      }
+      .hero-main .gold-word {
+        color: var(--gold);
+      }
+
+      .hero-year {
+        font-family: var(--display);
+        font-size: clamp(18px, 5vw, 36px);
+        letter-spacing: 14px;
+        color: var(--gold-light);
+        opacity: 0.5;
+        margin-bottom: 28px;
+      }
+
+      .hero-sub {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: clamp(14px, 3vw, 18px);
+        color: var(--white-dim);
+        letter-spacing: 1px;
+        line-height: 1.6;
+        margin-bottom: 48px;
+      }
+
+      /* Film frame corners */
+      .frame-corner {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-color: var(--gold-dim);
+        border-style: solid;
+        border-width: 0;
+      }
+      .frame-corner.tl {
+        top: 32px;
+        left: 32px;
+        border-top-width: 1px;
+        border-left-width: 1px;
+      }
+      .frame-corner.tr {
+        top: 32px;
+        right: 32px;
+        border-top-width: 1px;
+        border-right-width: 1px;
+      }
+      .frame-corner.bl {
+        bottom: 32px;
+        left: 32px;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+      }
+      .frame-corner.br {
+        bottom: 32px;
+        right: 32px;
+        border-bottom-width: 1px;
+        border-right-width: 1px;
+      }
+
+      .scroll-cue {
+        position: absolute;
+        bottom: 36px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 4px;
+        color: var(--white-dimmer);
+        text-transform: uppercase;
+        animation: cuePulse 2.5s ease-in-out infinite;
+      }
+      @keyframes cuePulse {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          opacity: 0.7;
+          transform: translateX(-50%) translateY(5px);
+        }
+      }
+
+      /* ============ ORIGIN ============ */
+      #origin {
+        background: linear-gradient(
+          180deg,
+          var(--black) 0%,
+          var(--black2) 100%
+        );
+      }
+
+      .large-year-bg {
+        position: absolute;
+        font-family: var(--display);
+        font-size: clamp(120px, 30vw, 260px);
+        color: rgba(201, 168, 76, 0.03);
+        letter-spacing: -8px;
+        user-select: none;
+        pointer-events: none;
+        line-height: 1;
+      }
+
+      .prose-block {
+        max-width: 520px;
+        width: 100%;
+        position: relative;
+        z-index: 2;
+      }
+      .prose-block p {
+        font-size: clamp(15px, 2.5vw, 18px);
+        font-weight: 300;
+        line-height: 2;
+        color: var(--white-dim);
+        text-align: left;
+        margin-bottom: 20px;
+      }
+      .prose-block p strong {
+        color: var(--white);
+        font-weight: 600;
+      }
+      .prose-block p em {
+        color: var(--gold);
+        font-style: italic;
+      }
+      .prose-block p .dim {
+        color: rgba(242, 234, 216, 0.3);
+      }
+
+      /* Pull quote */
+      .pull-quote {
+        border-left: 2px solid var(--gold);
+        padding: 8px 0 8px 20px;
+        margin: 24px 0;
+        font-style: italic;
+        font-size: clamp(16px, 2.8vw, 20px);
+        color: var(--gold-light);
+        opacity: 0.8;
+        line-height: 1.6;
+      }
+
+      /* ============ CRIME ============ */
+      #crime {
+        background: linear-gradient(
+          180deg,
+          var(--black2) 0%,
+          var(--black3) 100%
+        );
+      }
+
+      .crime-title {
+        font-family: var(--display);
+        font-size: clamp(42px, 11vw, 80px);
+        letter-spacing: 4px;
+        line-height: 1.05;
+        text-align: center;
+        margin-bottom: 40px;
+        color: var(--white);
+      }
+      .crime-title .accent {
+        color: var(--gold);
+      }
+      .crime-title .red-word {
+        color: var(--red);
+      }
+
+      .verdict-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1px;
+        max-width: 600px;
+        width: 100%;
+        background: var(--gold-dimmer);
+        border: 1px solid var(--gold-dimmer);
+        margin-bottom: 32px;
+      }
+      @media (max-width: 520px) {
+        .verdict-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .verdict-cell {
+        background: var(--black2);
+        padding: 20px 16px;
+        text-align: center;
+      }
+      .verdict-cell .vc-label {
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 2px;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        opacity: 0.6;
+      }
+      .verdict-cell .vc-val {
+        font-family: var(--display);
+        font-size: 22px;
+        letter-spacing: 2px;
+        color: var(--white);
+        line-height: 1.2;
+      }
+      .verdict-cell .vc-val.red {
+        color: var(--red);
+      }
+      .verdict-cell .vc-val.gold {
+        color: var(--gold);
+      }
+
+      /* ============ MIRACLE ============ */
+      #miracle {
+        background: linear-gradient(
+          180deg,
+          var(--black3) 0%,
+          var(--black) 100%
+        );
+        text-align: center;
+      }
+
+      .miracle-roman {
+        font-family: var(--display);
+        font-size: clamp(90px, 22vw, 200px);
+        color: rgba(201, 168, 76, 0.06);
+        position: absolute;
+        letter-spacing: -4px;
+        user-select: none;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      .miracle-headline {
+        font-family: var(--display);
+        font-size: clamp(48px, 12vw, 96px);
+        letter-spacing: 6px;
+        color: var(--white);
+        line-height: 1;
+        position: relative;
+        z-index: 2;
+        margin-bottom: 16px;
+      }
+      .miracle-headline .glow {
+        color: var(--gold);
+        text-shadow: 0 0 40px var(--gold-dim), 0 0 80px rgba(201, 168, 76, 0.1);
+      }
+
+      .miracle-body {
+        font-size: clamp(15px, 2.5vw, 19px);
+        font-style: italic;
+        font-weight: 300;
+        color: var(--white-dim);
+        max-width: 440px;
+        line-height: 1.9;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* ============ PARTY ============ */
+      #party {
+        background: var(--black);
+      }
+
+      .party-headline {
+        font-family: var(--display);
+        font-size: clamp(48px, 12vw, 88px);
+        letter-spacing: 6px;
+        color: var(--white);
+        margin-bottom: 48px;
+        text-align: center;
+      }
+
+      .details-list {
+        max-width: 520px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border: 1px solid var(--gold-dimmer);
+      }
+
+      .detail-item {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        border-bottom: 1px solid var(--gold-dimmer);
+      }
+      .detail-item:last-child {
+        border-bottom: none;
+      }
+
+      .di-label {
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 3px;
+        color: var(--gold);
+        text-transform: uppercase;
+        padding: 20px 16px;
+        border-right: 1px solid var(--gold-dimmer);
+        display: flex;
+        align-items: center;
+        opacity: 0.7;
+      }
+      .di-val {
+        font-size: clamp(13px, 2vw, 15px);
+        color: var(--white-dim);
+        padding: 20px 20px;
+        line-height: 1.7;
+        display: flex;
+        align-items: center;
+      }
+      .di-val strong {
+        color: var(--white);
+      }
+
+      /* ============ BRING ============ */
+      #bring {
+        background: linear-gradient(
+          180deg,
+          var(--black) 0%,
+          var(--black2) 100%
+        );
+      }
+
+      .bring-headline {
+        font-family: var(--display);
+        font-size: clamp(36px, 9vw, 64px);
+        letter-spacing: 5px;
+        color: var(--white);
+        margin-bottom: 12px;
+        text-align: center;
+      }
+      .bring-sub {
+        font-style: italic;
+        font-size: 14px;
+        color: var(--white-dimmer);
+        margin-bottom: 36px;
+        text-align: center;
+      }
+
+      .bring-list {
+        max-width: 520px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--gold-dimmer);
+        border: 1px solid var(--gold-dimmer);
+        margin-bottom: 28px;
+      }
+      @media (max-width: 420px) {
+        .bring-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .bring-cell {
+        background: var(--black2);
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        color: var(--white-dim);
+      }
+      .bring-cell .bc-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      /* Zelle card */
+      .zelle-card {
+        max-width: 520px;
+        width: 100%;
+        background: var(--gold);
+        padding: 24px 28px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 20px;
+      }
+      @media (max-width: 480px) {
+        .zelle-card {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .zc-left {
+      }
+      .zc-label {
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 3px;
+        color: rgba(8, 7, 6, 0.5);
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+      .zc-title {
+        font-family: var(--display);
+        font-size: 28px;
+        letter-spacing: 3px;
+        color: var(--black);
+        margin-bottom: 2px;
+      }
+      .zc-handle {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--black);
+        font-weight: 700;
+        word-break: break-all;
+      }
+      .zc-note {
+        font-size: 11px;
+        color: rgba(8, 7, 6, 0.55);
+        margin-top: 8px;
+        line-height: 1.6;
+        font-style: italic;
+      }
+      .zc-right {
+        font-size: 44px;
+        opacity: 0.3;
+      }
+
+      /* ============ RSVP ============ */
+      #rsvp {
+        background: linear-gradient(
+          180deg,
+          var(--black2) 0%,
+          var(--black) 100%
+        );
+      }
+
+      .rsvp-headline {
+        font-family: var(--display);
+        font-size: clamp(52px, 13vw, 100px);
+        letter-spacing: 8px;
+        color: var(--white);
+        margin-bottom: 4px;
+        text-align: center;
+      }
+      .rsvp-sub {
+        font-style: italic;
+        font-size: 15px;
+        color: var(--white-dimmer);
+        margin-bottom: 44px;
+        text-align: center;
+      }
+
+      .form-wrap {
+        max-width: 520px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border: 1px solid var(--gold-dimmer);
+      }
+
+      .form-field {
+        border-bottom: 1px solid var(--gold-dimmer);
+        display: grid;
+        grid-template-columns: 100px 1fr;
+      }
+      .form-field:last-of-type {
+        border-bottom: none;
+      }
+
+      .ff-label {
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 2px;
+        color: var(--gold);
+        text-transform: uppercase;
+        padding: 20px 16px;
+        border-right: 1px solid var(--gold-dimmer);
+        display: flex;
+        align-items: flex-start;
+        padding-top: 22px;
+        opacity: 0.7;
+        line-height: 1.5;
+      }
+
+      .form-field input,
+      .form-field select,
+      .form-field textarea {
+        background: transparent;
+        border: none;
+        color: var(--white);
+        font-family: var(--serif);
+        font-size: 15px;
+        padding: 18px 20px;
+        outline: none;
+        width: 100%;
+        -webkit-appearance: none;
+      }
+      .form-field select option {
+        background: var(--black2);
+      }
+      .form-field textarea {
+        resize: none;
+        height: 100px;
+        line-height: 1.7;
+      }
+      .form-field input::placeholder,
+      .form-field textarea::placeholder {
+        color: var(--white-dimmer);
+        font-style: italic;
+      }
+
+      .submit-btn {
+        width: 100%;
+        background: var(--gold);
+        color: var(--black);
+        border: none;
+        font-family: var(--display);
+        font-size: 20px;
+        letter-spacing: 4px;
+        padding: 22px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+        margin-top: 2px;
+      }
+      .submit-btn:hover {
+        background: var(--gold-light);
+        transform: scale(1.005);
+      }
+
+      .success-msg {
+        display: none;
+        text-align: center;
+        padding: 48px 32px;
+        border: 1px solid var(--gold-dimmer);
+        max-width: 520px;
+        width: 100%;
+      }
+      .success-big {
+        font-family: var(--display);
+        font-size: 48px;
+        letter-spacing: 4px;
+        color: var(--gold);
+        display: block;
+        margin-bottom: 16px;
+      }
+      .success-body {
+        font-style: italic;
+        font-size: 16px;
+        color: var(--white-dim);
+        line-height: 2;
+      }
+
+      /* ============ FOOTER ============ */
+      footer {
+        background: var(--black);
+        border-top: 1px solid var(--gold-dimmer);
+        text-align: center;
+        padding: 40px 24px;
+      }
+      .footer-logo {
+        font-family: var(--display);
+        font-size: 22px;
+        letter-spacing: 6px;
+        color: var(--gold);
+        opacity: 0.4;
+        margin-bottom: 12px;
+      }
+      .footer-text {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: var(--white-dimmer);
+        line-height: 2.2;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body class="opening-lock">
+    <!-- ============ CINEMATIC OPENING ============ -->
+    <div id="opening">
+      <div class="curtain left"></div>
+      <div class="curtain right"></div>
+
+      <span class="spark s1"></span>
+      <span class="spark s2"></span>
+      <span class="spark s3"></span>
+      <span class="spark s4"></span>
+      <span class="spark s5"></span>
+      <span class="spark s6"></span>
+
+      <div class="opening-content">
+        <div class="opening-kicker">Before the final chapter begins</div>
+        <div class="opening-title">
+          CLASS OF<br /><span style="color: var(--gold)">FINALLY</span>
+        </div>
+        <div class="opening-sub">
+          A graduation night. A dramatic entrance.<br />
+          A questionable amount of confidence.
+        </div>
+        <button class="enter-btn" onclick="startOpening()">
+          Enter the night ✦
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ MUSIC PLAYER ============ -->
+    <!-- Post Malone — Congratulations (local MP3) -->
+    <audio id="bg-music" loop preload="auto">
+      <source
+        src="Post Malone - Congratulations (Lyrics) ft. Quavo.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <div id="music-player" onclick="toggleMusic()" title="Play music">
+      <span class="music-icon" id="music-icon">🎵</span>
+      <div class="music-text-wrap">
+        <span class="music-title" id="music-title">Play Music</span>
+        <span class="music-status" id="music-status"
+          >Post Malone · Congratulations</span
+        >
+      </div>
+      <div class="music-bars" id="music-bars">
+        <div class="bar-line" style="--spd: 0.4s; height: 4px"></div>
+        <div class="bar-line" style="--spd: 0.6s; height: 8px"></div>
+        <div class="bar-line" style="--spd: 0.5s; height: 12px"></div>
+        <div class="bar-line" style="--spd: 0.7s; height: 6px"></div>
+        <div class="bar-line" style="--spd: 0.45s; height: 10px"></div>
+      </div>
+    </div>
+
+    <!-- ============ HERO ============ -->
+    <section id="hero">
+      <div class="frame-corner tl"></div>
+      <div class="frame-corner tr"></div>
+      <div class="frame-corner bl"></div>
+      <div class="frame-corner br"></div>
+
+      <div class="hero-eyebrow reveal">
+        North American University · Houston, TX · 2026
+      </div>
+      <div class="hero-main reveal rd1">
+        WE <span class="gold-word">MADE</span> IT
+      </div>
+      <div class="hero-year reveal rd2">CLASS &nbsp; OF &nbsp; FINALLY</div>
+      <div class="hero-sub reveal rd3">
+        We genuinely didn't think we would.<br />
+        And yet — here we are.
+      </div>
+      <div class="gold-rule reveal rd4"></div>
+      <div
+        class="hero-eyebrow reveal rd5"
+        style="margin-bottom: 0; opacity: 0.4"
+      >
+        A GRADUATION CELEBRATION · MAY 9, 2026
+      </div>
+
+      <div class="scroll-cue">↓ &nbsp; scroll &nbsp; ↓</div>
+    </section>
+
+    <div class="section-rule"></div>
+
+    <!-- ============ ORIGIN ============ -->
+    <section id="origin">
+      <div class="large-year-bg">2020</div>
+      <div class="chapter-tag reveal">
+        Chapter I &nbsp;·&nbsp; The Beginning
+      </div>
+      <div class="prose-block">
+        <p class="reveal rd1">
+          It started innocently enough. A group of students walked into
+          <strong>North American University</strong> when Bitcoin was still
+          cheap, Game of Thrones was still good, and the future felt wide open.
+        </p>
+        <p class="reveal rd2">
+          Some chose <strong>CS & Software Engineering</strong> — the degree
+          everyone swore was untouchable. Others chose
+          <strong>Business</strong> — convinced the corner office was just four
+          years away. A fearless few chose
+          <strong>Education & Psychology</strong> — to heal the world, while
+          quietly needing healing themselves.
+        </p>
+        <div class="pull-quote reveal rd3">
+          "None of them had any idea what was coming."
+        </div>
+        <p class="reveal rd4 dim">
+          They had deadlines, group projects with people who never replied, and
+          a deep, unshakeable belief that it would all make sense eventually.
+        </p>
+      </div>
+    </section>
+
+    <div class="section-rule"></div>
+
+    <!-- ============ CRIME ============ -->
+    <section id="crime">
+      <div class="chapter-tag reveal">
+        Chapter II &nbsp;·&nbsp; The Betrayal
+      </div>
+      <div class="crime-title reveal rd1">
+        Then the world<br />
+        <span class="red-word">fell</span> <span class="accent">apart.</span>
+      </div>
+
+      <div class="verdict-grid reveal rd2">
+        <div class="verdict-cell">
+          <div class="vc-label">CS studied coding</div>
+          <div class="vc-val">4+ yrs</div>
+        </div>
+        <div class="verdict-cell">
+          <div class="vc-label">ChatGPT learned it</div>
+          <div class="vc-val red">4 days</div>
+        </div>
+        <div class="verdict-cell">
+          <div class="vc-label">Replacement cost</div>
+          <div class="vc-val gold">$20/mo</div>
+        </div>
+        <div class="verdict-cell">
+          <div class="vc-label">Business expected</div>
+          <div class="vc-val">Corner office</div>
+        </div>
+        <div class="verdict-cell">
+          <div class="vc-label">Business received</div>
+          <div class="vc-val red">Indeed.com</div>
+        </div>
+        <div class="verdict-cell">
+          <div class="vc-label">Everyone's status</div>
+          <div class="vc-val gold">"Open to work"</div>
+        </div>
+      </div>
+
+      <div class="prose-block">
+        <p class="reveal rd3" style="text-align: center">
+          The CS market collapsed. The Business market dried up. The Psych grads
+          tried to fix the world —
+          <em>the world said no thanks.</em><br /><br />
+          GPAs: <strong>classified.</strong> Job offers: also classified.
+          <span class="dim">(There aren't any.)</span>
+        </p>
+      </div>
+    </section>
+
+    <div class="section-rule"></div>
+
+    <!-- ============ MIRACLE ============ -->
+    <section id="miracle">
+      <div class="miracle-roman">IV</div>
+      <div class="chapter-tag reveal">
+        Chapter III &nbsp;·&nbsp; Against All Odds
+      </div>
+      <div class="miracle-headline reveal rd1">
+        SOMEHOW.<br /><span class="glow">FINALLY.</span>
+      </div>
+      <div class="gold-rule reveal rd2"></div>
+      <div class="miracle-body reveal rd3">
+        The university decided it was cheaper to give us diplomas than keep
+        feeding us.<br /><br />
+        So here we are. Graduates. Unemployed. <em>Legendary.</em><br /><br />
+        And we're throwing a party about it.
+      </div>
+    </section>
+
+    <div class="section-rule"></div>
+
+    <!-- ============ PARTY ============ -->
+    <section id="party">
+      <div class="chapter-tag reveal">
+        Chapter IV &nbsp;·&nbsp; You're Invited
+      </div>
+      <div class="party-headline reveal rd1">THE PARTY</div>
+
+      <div class="details-list reveal rd2">
+        <div class="detail-item">
+          <div class="di-label">When</div>
+          <div class="di-val">
+            <strong>May 9, 2026</strong> &nbsp;—&nbsp; Evening into night.<br />Come
+            early enough to actually enjoy it.
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="di-label">Where</div>
+          <div class="di-val">
+            <strong>Private house, big backyard</strong><br />Houston, TX ·
+            Exact address sent on RSVP.
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="di-label">Program</div>
+          <div class="di-val">
+            Show outside → party inside.<br /><strong
+              >Chaotic. Loud. Legendary.</strong
+            >
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="di-label">Dress</div>
+          <div class="di-val">
+            Come as you are.<br />Just show up — that's already enough.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-rule"></div>
+
+    <!-- ============ BRING ============ -->
+    <section id="bring">
+      <div class="chapter-tag reveal">Chapter V &nbsp;·&nbsp; Make It Good</div>
+      <div class="bring-headline reveal rd1">WHAT TO BRING</div>
+      <div class="bring-sub reveal rd2">
+        The more you contribute, the better the night.
+      </div>
+
+      <div class="bring-list reveal rd3">
+        <div class="bring-cell"><span class="bc-icon">🎸</span> Guitar</div>
+        <div class="bring-cell">
+          <span class="bc-icon">🔊</span> Bluetooth speaker
+        </div>
+        <div class="bring-cell">
+          <span class="bc-icon">📸</span> Camera or polaroid
+        </div>
+        <div class="bring-cell">
+          <span class="bc-icon">🪔</span> Lighters / candles
+        </div>
+        <div class="bring-cell"><span class="bc-icon">🃏</span> Card games</div>
+        <div class="bring-cell">
+          <span class="bc-icon">🧃</span> Your favorite drink
+        </div>
+        <div class="bring-cell">
+          <span class="bc-icon">🫙</span> Snacks to share
+        </div>
+        <div class="bring-cell">
+          <span class="bc-icon">💃</span> Good energy. Required.
+        </div>
+      </div>
+
+      <div class="gold-rule reveal rd3"></div>
+
+      <div class="zelle-card reveal rd4">
+        <div class="zc-left">
+          <div class="zc-label">🎟 Your entry — split the cost</div>
+          <div class="zc-title">ZELLE</div>
+          <div class="zc-handle">arslan.atakhanov@gmail.com</div>
+          <div class="zc-note">
+            This is our party — everyone chips in equally.<br />
+            Airbnb + setup is split between all of us.<br />
+            Send your share · note: <strong>"Grad party"</strong>
+          </div>
+        </div>
+        <div class="zc-right">💸</div>
+      </div>
+    </section>
+
+    <div class="section-rule"></div>
+
+    <!-- ============ RSVP ============ -->
+    <section id="rsvp">
+      <div class="chapter-tag reveal">
+        Final Chapter &nbsp;·&nbsp; Are You In?
+      </div>
+      <div class="rsvp-headline reveal rd1">RSVP</div>
+      <div class="rsvp-sub reveal rd2">
+        No excuses accepted. We know where you live.
+      </div>
+
+      <form
+        class="form-wrap reveal rd3"
+        id="form-wrap"
+        action="https://formspree.io/f/mojrdngk"
+        method="POST"
+        onsubmit="handleSubmit(event)"
+      >
+        <div class="form-field">
+          <div class="ff-label">Name</div>
+          <input type="text" name="name" placeholder="Who are you?" required />
+        </div>
+
+        <div class="form-field">
+          <div class="ff-label">Coming?</div>
+          <select name="attending" required>
+            <option value="">— Select —</option>
+            <option value="yes">✓ &nbsp; Obviously. I'll be there.</option>
+            <option value="no">✗ &nbsp; I can't make it (coward)</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <div class="ff-label">Music</div>
+          <textarea
+            name="music"
+            placeholder="Artists, genres, songs — we're building the playlist. Don't hold back."
+          ></textarea>
+        </div>
+
+        <div class="form-field">
+          <div class="ff-label">Bringing?</div>
+          <input
+            type="text"
+            name="bringing"
+            placeholder="Guitar, speaker, snacks, good vibes..."
+          />
+        </div>
+
+        <div
+          class="form-field"
+          style="border-top: 1px solid var(--gold-dimmer)"
+        >
+          <div class="ff-label">Zelle</div>
+          <div style="padding: 16px 20px; display: flex; align-items: center">
+            <label
+              style="
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                cursor: pointer;
+                width: 100%;
+              "
+            >
+              <span
+                style="
+                  width: 28px;
+                  height: 28px;
+                  flex-shrink: 0;
+                  border: 2px solid var(--gold);
+                  border-radius: 3px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 16px;
+                  transition: background 0.2s;
+                  background: var(--black2);
+                  position: relative;
+                "
+                id="zelle-box"
+              >
+                <span
+                  id="zelle-check"
+                  style="
+                    display: none;
+                    color: var(--black);
+                    font-size: 18px;
+                    font-weight: 900;
+                    line-height: 1;
+                  "
+                  >✓</span
+                >
+              </span>
+              <span
+                style="
+                  font-size: 14px;
+                  color: var(--white-dim);
+                  font-style: italic;
+                  line-height: 1.5;
+                "
+              >
+                I already sent my share via Zelle 💸<br />
+                <span
+                  style="
+                    font-size: 11px;
+                    color: rgba(242, 234, 216, 0.3);
+                    font-style: normal;
+                    font-family: var(--mono);
+                    letter-spacing: 1px;
+                  "
+                  >arslan.atakhanov@gmail.com</span
+                >
+              </span>
+              <input
+                type="checkbox"
+                name="zelle_sent"
+                id="zelle-input"
+                style="position: absolute; opacity: 0; width: 0; height: 0"
+                onchange="toggleZelleBox(this)"
+              />
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          I'M IN — SEE YOU MAY 9 ✦
+        </button>
+      </form>
+
+      <div class="success-msg" id="success-msg">
+        <span class="success-big">YOU'RE IN ✦</span>
+        <div class="success-body">
+          See you May 9. Our night of reckoning.<br />
+          Address sent closer to the date.<br /><br />
+          ОСТОРОЖНО.<br />
+          Профессионалы выходят на рынок.<br /><br />
+          <em>Don't be boring. Don't leave early.<br />Don't forget Zelle.</em>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer>
+      <div class="footer-logo">NAU · 2026</div>
+      <div class="footer-text">
+        Class of "Finally" · North American University<br />
+        Thrown by us, for us — with zero job offers and full hearts<br />
+        graduation.exe completed · barely
+      </div>
+    </footer>
+
+    <script>
+      // ============ SCROLL REVEAL ============
+      const revealEls = document.querySelectorAll(".reveal");
+      const revealObs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) e.target.classList.add("visible");
+          });
+        },
+        { threshold: 0.1 }
+      );
+      revealEls.forEach((r) => revealObs.observe(r));
+
+      // ============ ZELLE CHECKBOX ============
+      function toggleZelleBox(input) {
+        const box = document.getElementById("zelle-box");
+        const check = document.getElementById("zelle-check");
+        if (!box || !check) return;
+
+        if (input.checked) {
+          box.style.background = "var(--gold)";
+          check.style.display = "block";
+        } else {
+          box.style.background = "var(--black2)";
+          check.style.display = "none";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const zelleBox = document.getElementById("zelle-box");
+        if (zelleBox) {
+          zelleBox.addEventListener("click", () => {
+            const input = document.getElementById("zelle-input");
+            if (!input) return;
+            input.checked = !input.checked;
+            toggleZelleBox(input);
+          });
+        }
+      });
+
+      // ============ MUSIC — LOCAL MP3 ============
+      let playing = false;
+      const audio = document.getElementById("bg-music");
+      const musicIcon = document.getElementById("music-icon");
+      const musicTitle = document.getElementById("music-title");
+      const musicStatus = document.getElementById("music-status");
+      const musicBars = document.getElementById("music-bars");
+
+      function setPlaying(state) {
+        playing = state;
+
+        if (state) {
+          musicIcon.textContent = "🔊";
+          musicTitle.textContent = "Now Playing";
+          musicStatus.textContent = "Post Malone · Congratulations";
+          musicBars.classList.add("active");
+        } else {
+          musicIcon.textContent = "🎵";
+          musicTitle.textContent = "Play Music";
+          musicStatus.textContent = "Post Malone · Congratulations";
+          musicBars.classList.remove("active");
+        }
+      }
+
+      function playMusic() {
+        if (!audio) return;
+        audio.volume = 0.8;
+        const playPromise = audio.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => setPlaying(true))
+            .catch(() => {
+              setPlaying(false);
+              alert(
+                "Music could not play. Make sure the MP3 file is in the same folder as this HTML file."
+              );
+            });
+        } else {
+          setPlaying(true);
+        }
+      }
+
+      function toggleMusic() {
+        if (!audio) return;
+
+        if (playing) {
+          audio.pause();
+          setPlaying(false);
+        } else {
+          playMusic();
+        }
+      }
+
+      // ============ CINEMATIC OPENING ============
+      function startOpening() {
+        const opening = document.getElementById("opening");
+        if (!opening) return;
+
+        // This starts immediately from the user's button click, so browser audio rules allow it.
+        playMusic();
+
+        opening.classList.add("opening");
+
+        setTimeout(() => {
+          opening.classList.add("opened");
+          document.body.classList.remove("opening-lock");
+          window.scrollTo({ top: 0, behavior: "instant" });
+        }, 1700);
+
+        setTimeout(() => opening.remove(), 2900);
+      }
+
+      // ============ FORM SUBMIT ============
+      function handleSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+
+        const action = form.action;
+        if (action.includes("YOUR_FORM_ID") || !action.includes("formspree")) {
+          document.getElementById("form-wrap").style.display = "none";
+          document.getElementById("success-msg").style.display = "block";
+          return;
+        }
+
+        fetch(action, {
+          method: "POST",
+          body: data,
+          headers: { Accept: "application/json" },
+        })
+          .then((r) => {
+            if (r.ok) {
+              document.getElementById("form-wrap").style.display = "none";
+              document.getElementById("success-msg").style.display = "block";
+            } else {
+              alert(
+                "Something went wrong. Try again or just text us directly!"
+              );
+            }
+          })
+          .catch(() => {
+            document.getElementById("form-wrap").style.display = "none";
+            document.getElementById("success-msg").style.display = "block";
+          });
+      }
+    </script>
+  </body>
+</html>
